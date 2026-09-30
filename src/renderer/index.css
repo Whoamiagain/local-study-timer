@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #f8fafc;
+  background-color: #0f172a;
+  color-scheme: dark;
+  font-family: 'Avenir Next', Avenir, 'Segoe UI', sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+* {
+  scrollbar-color: #334155 #1e293b;
+  scrollbar-width: thin;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 1px solid #1e293b;
+  border-radius: 9999px;
+  background: #334155;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+.card-hover {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

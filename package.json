@@ -1,0 +1,78 @@
+{
+  "name": "local-study-timer",
+  "productName": "local-study-timer",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": ".vite/build/main.js",
+  "private": true,
+  "build": {
+    "appId": "com.localstudytimer.app",
+    "productName": "LocalStudyTimer",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "YOUR_GITHUB_USERNAME",
+        "repo": "YOUR_REPOSITORY_NAME"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint --ext .ts,.tsx .",
+    "rebuild": "node ./node_modules/@electron/rebuild/lib/cli.js"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Anh Khoi Phuong",
+    "email": "axp1264@case.edu"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.4.2",
+    "@electron-forge/maker-deb": "^6.4.2",
+    "@electron-forge/maker-rpm": "^6.4.2",
+    "@electron-forge/maker-squirrel": "^6.4.2",
+    "@electron-forge/maker-zip": "^6.4.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^6.4.2",
+    "@electron-forge/plugin-fuses": "^6.4.2",
+    "@electron-forge/plugin-vite": "^6.4.2",
+    "@electron/fuses": "^1.8.0",
+    "@electron/rebuild": "^4.2.0",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/electron-squirrel-startup": "^1.0.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "autoprefixer": "^10.6.1",
+    "electron": "44.4.5",
+    "eslint": "^8.57.1",
+    "eslint-plugin-import": "^2.32.0",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.9.3",
+    "vite": "^4.5.14"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "clsx": "^2.1.1",
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-updater": "^6.8.9",
+    "lucide-react": "^1.48.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwind-merge": "^3.7.0"
+  }
+}
