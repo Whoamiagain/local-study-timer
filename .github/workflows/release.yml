@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Build and Publish Electron App
-        run: npm run build && npm exec -- electron-builder --publish=never
+        run: npm run build && node -e "require('electron-builder').build({publish:'never'}).catch(error => { console.error(error); process.exit(1); })"
 
       - name: Upload installers
         uses: actions/upload-artifact@v4
