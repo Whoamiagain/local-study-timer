@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Build and Publish Electron App
-        run: npm run build && npm exec -- electron-builder --publish never
+        run: npm run build && npm exec -- electron-builder --publish=never
 
       - name: Upload installers
         uses: actions/upload-artifact@v4
@@ -40,6 +40,7 @@ jobs:
             dist/*.exe
             dist/*.dmg
             dist/*.blockmap
+            dist/latest*.yml
           if-no-files-found: error
 
   publish:
