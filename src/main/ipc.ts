@@ -5,6 +5,7 @@ import {
   getSchemes,
   updateScheme,
 } from './db';
+import { WebSocket, WebSocketServer } from 'ws';
 import type {
   Scheme,
   StudyTimerState,
@@ -25,13 +26,46 @@ const createIdleTimerState = (): TimerState => ({
 let timerState = createIdleTimerState();
 let timerInterval: ReturnType<typeof setInterval> | null = null;
 
+const getTimerStatus = () => {
+  const currentBlock =
+    timerState.currentScheme?.blocks[timerState.currentBlockIndex] ?? null;
+  const currentBlockType = currentBlock?.type ?? 'REST';
+
+  return {
+    workActive: timerState.isRunning && currentBlockType === 'WORK',
+    currentBlockType,
+    timeRemaining: timerState.secondsRemaining,
+  };
+};
+
 export const registerIpcHandlers = (
   getMainWindow: () => BrowserWindow | null,
 ) => {
+  const statusServer = new WebSocketServer({
+    host: '127.0.0.1',
+    port: 45458,
+  });
+  statusServer.on('error', (error: Error) => {
+    console.error('Timer status WebSocket server error:', error);
+  });
+  statusServer.on('connection', (client) => {
+    client.on('error', (error: Error) => {
+      console.error('Timer status WebSocket client error:', error);
+    });
+    client.send(JSON.stringify(getTimerStatus()));
+  });
+
   const broadcastTimerState = () => {
     const mainWindow = getMainWindow();
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('timer-tick', timerState);
+    }
+
+    const statusMessage = JSON.stringify(getTimerStatus());
+    for (const client of statusServer.clients) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(statusMessage);
+      }
     }
   };
 

@@ -18,6 +18,8 @@ export default defineConfig({
 		rollupOptions: {
 			external: (id) =>
 				id === 'better-sqlite3' ||
+				id === 'dotenv' ||
+				id === 'dotenv/config' ||
 				id === 'electron' ||
 				id === 'electron-updater' ||
 				id === 'electron-squirrel-startup' ||
