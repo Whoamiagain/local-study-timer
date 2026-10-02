@@ -11,6 +11,7 @@ const initialTimerState: StudyTimerState = {
   blockId: null,
   endsAt: null,
   remainingSeconds: 0,
+  awaitingAdvance: false,
 };
 
 export default function App() {
@@ -36,6 +37,7 @@ export default function App() {
         state.currentScheme?.blocks[state.currentBlockIndex] ?? null;
       setTimerState({
         phase: state.isRunning ? 'running' : state.isPaused ? 'paused' : 'idle',
+        awaitingAdvance: state.awaitingAdvance,
         schemeId: state.currentScheme ? String(state.currentScheme.id) : null,
         blockId: block ? String(block.id) : null,
         endsAt: state.isRunning
@@ -56,6 +58,17 @@ export default function App() {
       nextSchemes.find((item) => item.id === scheme.id) ??
       [...nextSchemes].reverse().find((item) => item.name === scheme.name);
     setSelectedSchemeId(savedScheme?.id ?? scheme.id);
+  };
+
+  const createScheme = async () => {
+    const baseName = 'New scheme';
+    let name = baseName;
+    let suffix = 2;
+    while (schemes.some((scheme) => scheme.name === name)) {
+      name = `${baseName} ${suffix}`;
+      suffix += 1;
+    }
+    await saveScheme({ id: crypto.randomUUID(), name, blocks: [] });
   };
 
   const deleteScheme = async (schemeId: string) => {
@@ -159,6 +172,7 @@ export default function App() {
           <SchemeManager
             schemes={schemes}
             selectedScheme={selectedScheme}
+            onCreate={createScheme}
             onSave={saveScheme}
             onDelete={deleteScheme}
           />

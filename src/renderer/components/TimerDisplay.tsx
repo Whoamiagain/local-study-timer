@@ -65,6 +65,14 @@ export default function TimerDisplay({
             <Pause size={16} aria-hidden="true" />
             Pause
           </button>
+        ) : state.awaitingAdvance ? (
+          <button
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white shadow-lg shadow-emerald-600/30 transition-all hover:bg-emerald-500"
+            onClick={onStart}
+          >
+            <SkipForward size={16} aria-hidden="true" />
+            Advance to next phase
+          </button>
         ) : (
           <button
             className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl px-6 py-3 shadow-lg shadow-indigo-600/30 transition-all disabled:cursor-not-allowed disabled:opacity-50"

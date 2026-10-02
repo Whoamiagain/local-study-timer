@@ -22,6 +22,7 @@ export interface TimerState {
   secondsRemaining: number;
   isRunning: boolean;
   isPaused: boolean;
+  awaitingAdvance: boolean;
   canSkipCurrentBlock: boolean;
 }
 
@@ -50,6 +51,7 @@ export interface Scheme {
 
 export interface StudyTimerState {
   phase: 'idle' | 'running' | 'paused';
+  awaitingAdvance: boolean;
   schemeId: string | null;
   blockId: string | null;
   endsAt: number | null;

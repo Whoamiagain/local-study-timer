@@ -18,6 +18,7 @@ const createIdleTimerState = (): TimerState => ({
   secondsRemaining: 0,
   isRunning: false,
   isPaused: false,
+  awaitingAdvance: false,
   canSkipCurrentBlock: false,
 });
 
@@ -63,6 +64,7 @@ export const registerIpcHandlers = (
         : timerState.isPaused
           ? 'paused'
           : 'idle',
+      awaitingAdvance: timerState.awaitingAdvance,
       schemeId: timerState.currentScheme
         ? String(timerState.currentScheme.id)
         : null,
@@ -76,34 +78,27 @@ export const registerIpcHandlers = (
 
   const advanceBlock = (skipToWork = false) => {
     const scheme = timerState.currentScheme;
-    let nextIndex = timerState.currentBlockIndex + 1;
-    if (skipToWork && scheme) {
-      while (
-        nextIndex < scheme.blocks.length &&
-        scheme.blocks[nextIndex].type !== 'WORK'
-      ) {
-        nextIndex += 1;
-      }
+    clearTimerInterval();
+    if (!scheme || scheme.blocks.length === 0) {
+      setTimerState({ ...timerState, ...createIdleTimerState() });
+      return;
     }
 
-    if (!scheme || nextIndex >= scheme.blocks.length) {
-      clearTimerInterval();
-      setTimerState({
-        ...timerState,
-        currentBlockIndex: 0,
-        secondsRemaining: 0,
-        isRunning: false,
-        isPaused: false,
-      });
-      return;
+    let nextIndex = (timerState.currentBlockIndex + 1) % scheme.blocks.length;
+    if (skipToWork) {
+      for (let checkedBlocks = 0; checkedBlocks < scheme.blocks.length; checkedBlocks += 1) {
+        if (scheme.blocks[nextIndex].type === 'WORK') break;
+        nextIndex = (nextIndex + 1) % scheme.blocks.length;
+      }
     }
 
     setTimerState({
       ...timerState,
       currentBlockIndex: nextIndex,
       secondsRemaining: scheme.blocks[nextIndex].duration_minutes * 60,
-      isRunning: true,
-      isPaused: false,
+      isRunning: false,
+      isPaused: true,
+      awaitingAdvance: true,
     });
   };
 
@@ -113,7 +108,7 @@ export const registerIpcHandlers = (
     if (Notification.isSupported()) {
       new Notification({
         title: 'Study timer',
-        body: `${completedBlock?.type === 'REST' ? 'Rest' : 'Work'} block complete`,
+        body: `${completedBlock?.type === 'REST' ? 'Rest' : 'Work'} has ended!`,
       }).show();
     }
   };
@@ -166,6 +161,7 @@ export const registerIpcHandlers = (
       secondsRemaining,
       isRunning: true,
       isPaused: false,
+      awaitingAdvance: false,
     });
     startTimerInterval();
   };
@@ -186,6 +182,7 @@ export const registerIpcHandlers = (
       secondsRemaining: firstBlock ? firstBlock.duration_minutes * 60 : 0,
       isRunning: false,
       isPaused: false,
+      awaitingAdvance: false,
     });
   };
 
@@ -331,6 +328,7 @@ export const registerIpcHandlers = (
         : target.scheme.blocks[target.blockIndex].duration_minutes * 60,
       isRunning: true,
       isPaused: false,
+      awaitingAdvance: false,
       canSkipCurrentBlock: false,
     });
     startTimerInterval();

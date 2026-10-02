@@ -1,7 +1,7 @@
 {
   "name": "local-study-timer",
   "productName": "local-study-timer",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "private": true,
