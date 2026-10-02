@@ -32,6 +32,33 @@ jobs:
       - name: Build and Publish Electron App
         run: npm run build && node -e "require('electron-builder').build({publish:'never'}).catch(error => { console.error(error); process.exit(1); })"
 
+      - name: Align Windows installer with update metadata
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $manifest = Get-Content dist/latest.yml -Raw
+          $match = [regex]::Match($manifest, '(?m)^\s*-\s*url:\s*(?<name>.+?)\s*$')
+          if (-not $match.Success) {
+            throw 'Could not find the Windows installer name in dist/latest.yml.'
+          }
+
+          $expectedName = $match.Groups['name'].Value
+          $installers = @(Get-ChildItem dist -Filter '*.exe' -File)
+          if ($installers.Count -ne 1) {
+            throw "Expected one Windows installer, found $($installers.Count)."
+          }
+
+          $installer = $installers[0]
+          if ($installer.Name -ne $expectedName) {
+            $expectedPath = Join-Path dist $expectedName
+            Move-Item $installer.FullName $expectedPath
+
+            $blockmapPath = "$($installer.FullName).blockmap"
+            if (Test-Path $blockmapPath) {
+              Move-Item $blockmapPath "$expectedPath.blockmap"
+            }
+          }
+
       - name: Upload installers
         uses: actions/upload-artifact@v4
         with:
