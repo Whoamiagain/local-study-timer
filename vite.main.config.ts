@@ -23,6 +23,7 @@ export default defineConfig({
 				id === 'electron' ||
 				id === 'electron-updater' ||
 				id === 'electron-squirrel-startup' ||
+				id === 'ws' ||
 				isNodeBuiltin(id),
 		},
 	},
